@@ -1,129 +1,129 @@
 mixed-port: 7890
 #---------------------------------------------------#
-## 配置文件需要放置在 $HOME/.config/clash/*.yaml
 allow-lan: false
 mode: Rule
 log-level: silent
 external-controller: 127.0.0.1:60000
 
 # 节点配置文件统一存放在 ./profiles/proxies/ 目录中
+
 proxy-providers:
-  # 从链接导入的配置文件
-  foo:
-    type: http
-    path: ./profiles/proxies/foo.yaml
-    url: https://clash1.20210108.xyz
-    interval: 3600 
-    health-check:
-      enable: true
-      url: http://www.gstatic.com/generate_204
-      interval: 300
+# 从链接导入的配置文件（支持多个Clash 订阅链接）
+ foo:
+   type: http
+   path: ./profiles/proxies/foo.yaml
+   url: https://clash1.20210108.xyz
+   interval: 3600 
+   filter: '日本|韩国|新加坡|台湾|香港' # 删选出含有该关键词的节点
+   health-check:
+     enable: true
+     url: http://www.gstatic.com/generate_204
+     interval: 300
+
+ # 从本地导入的 clash 配置文件
+ bar:
+   type: file
+   path: ./profiles/proxies/bar.yaml
+   health-check:
+     enable: true
+     url: http://www.gstatic.com/generate_204
+     interval: 600
+
 proxy-groups:
-  - name: PROXY
-    type: url-test
-    interval: 3600 
-    url: http://www.gstatic.com/generate_204
-    use:
-      - foo
+- name: PROXY
+  type: url-test
+  url: http://www.gstatic.com/generate_204
+  interval: 3600
+  use: # 引入proxy-provider 使用 use 关键字
+   - foo
+   - bar
+  proxies:
+   - DIRECT
 
 # clash-rules项目提供的规则集
-# 规则文件统一存放在 ./profiles/rules/ 目录中
 rule-providers:
   reject:
     type: http
     behavior: domain
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"
-    path: ./profiles/rules/reject.yaml
+    path: ./ruleset/reject.yaml
     interval: 86400
-
   icloud:
     type: http
     behavior: domain
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt"
-    path: ./profiles/rules/icloud.yaml
+    path: ./ruleset/icloud.yaml
     interval: 86400
-
   apple:
     type: http
     behavior: domain
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/apple.txt"
-    path: ./profiles/rules/apple.yaml
+    path: ./ruleset/apple.yaml
     interval: 86400
-
   google:
     type: http
     behavior: domain
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/google.txt"
-    path: ./profiles/rules/google.yaml
+    path: ./ruleset/google.yaml
     interval: 86400
-
   proxy:
     type: http
     behavior: domain
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt"
-    path: ./profiles/rules/proxy.yaml
+    path: ./ruleset/proxy.yaml
     interval: 86400
-
   direct:
     type: http
     behavior: domain
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt"
-    path: ./profiles/rules/direct.yaml
+    path: ./ruleset/direct.yaml
     interval: 86400
-
   private:
     type: http
     behavior: domain
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt"
-    path: ./profiles/rules/private.yaml
+    path: ./ruleset/private.yaml
     interval: 86400
-
   gfw:
     type: http
     behavior: domain
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt"
-    path: ./profiles/rules/gfw.yaml
+    path: ./ruleset/gfw.yaml
     interval: 86400
-
   greatfire:
     type: http
     behavior: domain
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/greatfire.txt"
-    path: ./profiles/rules/greatfire.yaml
+    path: ./ruleset/greatfire.yaml
     interval: 86400
-
   tld-not-cn:
     type: http
     behavior: domain
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/tld-not-cn.txt"
-    path: ./profiles/rules/tld-not-cn.yaml
+    path: ./ruleset/tld-not-cn.yaml
     interval: 86400
-
   telegramcidr:
     type: http
     behavior: ipcidr
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt"
-    path: ./profiles/rules/telegramcidr.yaml
+    path: ./ruleset/telegramcidr.yaml
     interval: 86400
-
   cncidr:
     type: http
     behavior: ipcidr
     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt"
-    path: ./profiles/rules/cncidr.yaml
+    path: ./ruleset/cncidr.yaml
     interval: 86400
-
   lancidr:
-    type: http
-    behavior: ipcidr
-    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt"
-    path: ./profiles/rules/lancidr.yaml
-    interval: 86400
-
-# 规则
+     type: http
+     behavior: ipcidr
+     url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt"
+     path: ./ruleset/lancidr.yaml
+     interval: 86400 
+# 分流规则
 rules:
-  - PROCESS-NAME,v2ray,DIRECT
   - PROCESS-NAME,xray,DIRECT
+  - PROCESS-NAME,v2ray,DIRECT
   - PROCESS-NAME,naive,DIRECT
   - PROCESS-NAME,trojan,DIRECT
   - PROCESS-NAME,trojan-go,DIRECT
@@ -176,6 +176,6 @@ rules:
   - RULE-SET,proxy,PROXY
   - RULE-SET,direct,DIRECT
   - RULE-SET,telegramcidr,PROXY
-  - GEOIP,,DIRECT
+  - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
   - MATCH,PROXY
