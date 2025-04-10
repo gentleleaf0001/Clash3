@@ -30,6 +30,13 @@ proxy-providers:
      interval: 600
 
 proxy-groups:
+- name: 手动选择节点
+  type: select
+  use:
+    - foo
+    - bar
+  proxies:
+    - DIRECT
 - name: PROXY
   type: url-test
   url: http://www.gstatic.com/generate_204
