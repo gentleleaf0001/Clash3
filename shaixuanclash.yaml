@@ -1,9 +1,9 @@
-mixed-port: 7890
-#---------------------------------------------------#
-allow-lan: false
+port: 7890
+socks-port: 7891
+allow-lan: true
 mode: Rule
-log-level: silent
-external-controller: 127.0.0.1:60000
+log-level: info
+external-controller: :9090
 
 # 节点配置文件统一存放在 ./profiles/proxies/ 目录中
 
