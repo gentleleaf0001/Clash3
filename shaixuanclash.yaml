@@ -12,7 +12,7 @@ proxy-providers:
  foo:
    type: http
    path: ./profiles/proxies/foo.yaml
-   url: https://SOS.CMLiussss.net/auto
+   url: https://clash1.20210108.xyz/
    interval: 3600 
    filter: '日本|韩国|新加坡|台湾|香港|美国' # 删选出含有该关键词的节点
    health-check:
@@ -20,25 +20,12 @@ proxy-providers:
      url: http://www.gstatic.com/generate_204
      interval: 300
 
- bar:
-   type: http
-   path: ./profiles/proxies/foo.yaml
-   url: https://clash1.20210108.xyz/
-   interval: 3600 
-   filter: '日本|韩国|新加坡|台湾|香港' # 删选出含有该关键词的节点
-   health-check:
-     enable: true
-     url: http://www.gstatic.com/generate_204
-     interval: 300
-
-
 
 proxy-groups:
 - name: 手动选择节点
   type: select
   use:
     - foo
-    - bar
   proxies:
     - DIRECT
     
@@ -48,7 +35,6 @@ proxy-groups:
   interval: 3600
   use: # 引入proxy-provider 使用 use 关键字
    - foo
-   - bar
   proxies:
    - DIRECT
 
